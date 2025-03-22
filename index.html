@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Film Arama Sitesi - Filmler.com</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="index.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <div class="logo">
+                <a href="#">Filmler</a>
+            </div>
+            <div class="search-bar">
+                <input id="search_input" type="search" placeholder="search...">
+                <button id="search_button" type="submit">Search</button>
+            </div>
+        </div>
+        <div class="nav-bar2">
+            <ul>
+                <li><a href="#">Ana Sayfa</a></li>
+                <li><a href="#">Bütün Filmler</a></li>
+                <li><a href="#">Katogoriler</a></li>
+                <li><a href="#">Türk Filmleri</a></li>
+                <li><a href="#">Yabancı Filmler</a></li>
+            </ul>
+        </div>
+        <div class="film-container">
+            <div id="result_area" class="articles">
+
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+      $(document).ready(function(){
+        const apiKey = 'YourApiKey';
+        $('#search_button').on('click',function(){
+            let search_query = $('#search_input').val();
+            if(search_query != null){
+                $.ajax({
+                url: `https://www.omdbapi.com/?apikey=${apiKey}&s=${search_query}`,
+                method: 'GET',
+                success: function(response){
+                    if(response.Response=='True'){
+                        let movies = response.Search;
+                        let movie_area =$('#result_area');
+                        let film_container = $('.film-container');
+                        film_container.css('background-color','white');
+                        movie_area.empty();
+
+                        let row = null;
+                        for(let i = 0; i<movies.length;i++){
+                            let articleElement = document.createElement("article");
+                            if(i%5===0){
+                                row = document.createElement('div');
+                                row.classList.add('row');
+                                movie_area.append(row);
+                            }
+                            articleElement.classList.add("film-post");
+                            let title = document.createElement('h2');
+                            title.textContent = movies[i].Title;
+                            let poster = document.createElement('img');
+                            poster.src = movies[i].Poster;
+                            poster.alt = movies[i].Title;
+                            articleElement.appendChild(poster);
+                            articleElement.appendChild(title);
+                            let type = document.createElement('p');
+                            type.textContent = movies[i].Type;
+                            articleElement.appendChild(type);
+                            let year = document.createElement('p');
+                            year.textContent = movies[i].Year;
+                            articleElement.appendChild(year);
+                            row.appendChild(articleElement);
+                        }
+                    }
+                },
+                error: function(){
+
+                }
+            });
+            }else{
+            alert('Lutfen Parametre Giriniz!!!')
+            };
+        });
+    });
+
+</script>
+</html>
